@@ -1,22 +1,26 @@
 const Eris = require("eris");
 const keep_alive = require('./keep_alive.js');
 
-// Supports up to 10 tokens via environment variables:
-// token1, token2, token3, ... token10
-// You can also still use just "token" for a single token (backwards compatible).
+// Debug: print all env var KEYS so you can confirm Railway is passing them in
+console.log("Env keys available:", Object.keys(process.env).join(", "));
 
+// Supports up to 10 tokens via environment variables:
+// token, token1, token2, ... token10
 const TOKEN_KEYS = [
-  'token',   // backwards-compatible single token
+  'token',
   'token1', 'token2', 'token3', 'token4', 'token5',
   'token6', 'token7', 'token8', 'token9', 'token10'
 ];
 
 // Collect all tokens that are actually set in the environment
 const tokens = TOKEN_KEYS
-  .map(key => process.env[key])
+  .map(key => {
+    const val = process.env[key];
+    console.log(`Checking "${key}": ${val ? "FOUND" : "not set"}`);
+    return val;
+  })
   .filter(Boolean)
-  // Deduplicate in case someone sets both "token" and "token1" to the same value
-  .filter((value, index, self) => self.indexOf(value) === index);
+  .filter((value, index, self) => self.indexOf(value) === index); // deduplicate
 
 if (tokens.length === 0) {
   console.error(
